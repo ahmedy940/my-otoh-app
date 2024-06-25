@@ -1,0 +1,4 @@
+{
+  "name": "my-shopify-app",
+  "welcome": "Bienvenue dans l'extension {{TARGET}}!"
+}

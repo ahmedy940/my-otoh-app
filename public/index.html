@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopify GPT Consultant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <h1>Shopify GPT Consultant</h1>
+  <div>
+    <label for="filePath">File Path:</label>
+    <input type="text" id="filePath">
+    <button onclick="readFile()">Read File</button>
+    <button onclick="writeFile()">Write File</button>
+  </div>
+  <div>
+    <label for="fileContent">File Content:</label>
+    <textarea id="fileContent" rows="10" cols="50" placeholder="File content will be displayed here" title="File Content"></textarea>
+  </div>
+  <div>
+    <label for="prompt">Prompt:</label>
+    <input type="text" id="prompt" placeholder="Enter your prompt here" title="Prompt">
+    <button onclick="generateCode()">Generate Code</button>
+  </div>
+  <div>
+    <label for="generatedCode">Generated Code:</label>
+    <textarea id="generatedCode" rows="10" cols="50" placeholder="Generated code will be displayed here" title="Generated Code"></textarea>
+  </div>
+  <!-- Add a login form -->
+  <div>
+    <h2>Login</h2>
+    <label for="username">Username:</label>
+    <input type="text" id="username">
+    <label for="password">Password:</label>
+    <input type="password" id="password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <script>
+    let token = '';
+
+    async function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      console.log('Sending login request:', { username, password }); // Debugging line
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+      console.log('Login response:', data); // Debugging line
+      if (data.token) {
+        token = data.token;
+        alert('Login successful');
+      } else {
+        alert('Login failed');
+      }
+    }
+
+    async function readFile() {
+      const filePath = document.getElementById('filePath').value;
+      const response = await fetch(`/read-file?filePath=${filePath}`, {
+        headers: { 'Authorization': token }
+      });
+      const data = await response.json();
+      document.getElementById('fileContent').value = data.content;
+    }
+
+    async function writeFile() {
+      const filePath = document.getElementById('filePath').value;
+      const content = document.getElementById('fileContent').value;
+      await fetch('/write-file', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({ filePath, content })
+      });
+      alert('File updated successfully');
+    }
+
+    async function generateCode() {
+      const prompt = document.getElementById('prompt').value;
+      const response = await fetch('/generate-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await response.json();
+      document.getElementById('generatedCode').value = data.code;
+    }
+  </script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+</body>
+</html>
