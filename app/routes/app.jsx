@@ -4,7 +4,11 @@ import { boundary } from "@shopify/shopify-app-remix/server";
 import { AppProvider } from "@shopify/shopify-app-remix/react";
 import { NavMenu } from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
-import { authenticate } from "../shopify.server";
+import { authenticate } from "../../shopify.server"; // Adjusted path
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import AppNavigation from '../../components/AppNavigation'; // Adjusted path
+import ManageCampaigns from '../../pages/ManageCampaigns';  // Adjusted path
+import SidePanel from '../../components/SidePanel';        // Adjusted path
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
@@ -19,13 +23,26 @@ export default function App() {
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
-      <NavMenu>
-        <Link to="/app" rel="home">
-          Home
-        </Link>
-        <Link to="/app/additional">Additional page</Link>
-      </NavMenu>
-      <Outlet />
+      <Router>
+        <NavMenu>
+          <Link to="/app" rel="home">
+            Home
+          </Link>
+          <Link to="/app/additional">Additional page</Link>
+        </NavMenu>
+        <Frame
+          navigation={<AppNavigation />}
+          topBar={null}
+          secondaryMenu={<SidePanel />}
+        >
+          <Routes>
+            <Route path="/app" element={<Outlet />}>
+              <Route path="manage-campaigns" element={<ManageCampaigns />} />
+              {/* Add other routes here */}
+            </Route>
+          </Routes>
+        </Frame>
+      </Router>
     </AppProvider>
   );
 }

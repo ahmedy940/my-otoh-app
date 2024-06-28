@@ -1,0 +1,388 @@
+openapi: 3.1.0
+info:
+  title: Otoh Shopify App API
+  description: API for the Otoh Shopify app to integrate with the OpenAI assistant for development tasks.
+  version: 1.0.0
+servers:
+  - url: https://localhost:4000
+    description: Local server
+
+components:
+  schemas:
+    dummy:  # Placeholder schema to ensure it's recognized as an object
+      type: string
+    FileMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FolderMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+        numberOfFiles:
+          type: integer
+        size:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+paths:
+  /api/files:
+    get:
+      operationId: listFiles
+      summary: List all files in the project directory
+      responses:
+        '200':
+          description: A list of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: File name
+    post:
+      operationId: createFile
+      summary: Create a new file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  description: The file path relative to the project directory
+                content:
+                  type: string
+                  description: The content of the new file
+      responses:
+        '201':
+          description: File created
+  /api/files/{filePath}:
+    get:
+      operationId: readFile
+      summary: Read a file by path
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The file path relative to the project directory
+      responses:
+        '200':
+          description: File content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: string
+                    description: The content of the file
+        '404':
+          description: File not found
+    put:
+      operationId: writeFile
+      summary: Write to a file by path
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The file path relative to the project directory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: The content to write to the file
+      responses:
+        '200':
+          description: File written
+        '404':
+          description: File not found
+    delete:
+      operationId: deleteFile
+      summary: Delete a file by path
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The file path relative to the project directory
+      responses:
+        '204':
+          description: File deleted
+        '404':
+          description: File not found
+    patch:
+      operationId: editFile
+      summary: Edit a file by path
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The file path relative to the project directory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: The content to edit in the file
+      responses:
+        '200':
+          description: File edited
+        '404':
+          description: File not found
+  /api/files/rename/{filePath}:
+    put:
+      operationId: renameFile
+      summary: Rename a file
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The current file path relative to the project directory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPath:
+                  type: string
+                  description: The new file path relative to the project directory
+      responses:
+        '200':
+          description: File renamed
+        '404':
+          description: File not found
+  /api/files/copy:
+    post:
+      operationId: copyFile
+      summary: Copy a file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sourcePath:
+                  type: string
+                  description: The source file path relative to the project directory
+                destinationPath:
+                  type: string
+                  description: The destination file path relative to the project directory
+      responses:
+        '201':
+          description: File copied
+        '404':
+          description: File not found
+  /api/folders:
+    post:
+      operationId: createFolder
+      summary: Create a new folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  description: The folder path relative to the project directory
+      responses:
+        '201':
+          description: Folder created
+  /api/folders/{folderPath}:
+    get:
+      operationId: getFolderContents
+      summary: Get contents of a folder
+      parameters:
+        - name: folderPath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The folder path relative to the project directory
+      responses:
+        '200':
+          description: Folder contents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: File or folder name
+        '404':
+          description: Folder not found
+  /api/files/search:
+    get:
+      operationId: searchFiles
+      summary: Search for files
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The search query
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: File name
+        '404':
+          description: No files found
+  /api/files/upload:
+    post:
+      operationId: uploadFile
+      summary: Upload a file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload
+      responses:
+        '201':
+          description: File uploaded
+  /api/files/download/{filePath}:
+    get:
+      operationId: downloadFile
+      summary: Download a file
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The file path relative to the project directory
+      responses:
+        '200':
+          description: File downloaded
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                description: The file content
+        '404':
+          description: File not found
+  /api/files/metadata/{filePath}:
+    get:
+      operationId: getFileMetadata
+      summary: Get metadata of a file
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The file path relative to the project directory
+      responses:
+        '200':
+          description: File metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileMetadata'
+        '404':
+          description: File not found
+  /api/folders/metadata/{folderPath}:
+    get:
+      operationId: getFolderMetadata
+      summary: Get metadata of a folder
+      parameters:
+        - name: folderPath
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The folder path relative to the project directory
+      responses:
+        '200':
+          description: Folder metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderMetadata'
+        '404':
+          description: Folder not found
+  /api/files/batch:
+    post:
+      operationId: batchOperations
+      summary: Perform batch operations on files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      operation:
+                        type: string
+                        enum: [copy, move, delete, rename]
+                        description: The operation to perform
+                      sourcePath:
+                        type: string
+                        description: The source file path relative to the project directory
+                      destinationPath:
+                        type: string
+                        description: The destination file path relative to the project directory (if applicable)
+                      newName:
+                        type: string
+                        description: The new name for the file (if applicable)
+      responses:
+        '200':
+          description: Batch operations completed

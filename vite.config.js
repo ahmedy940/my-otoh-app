@@ -57,7 +57,8 @@ export default defineConfig({
     alias: {
       // Add these aliases to ensure proper handling of Node.js core modules
       'node:fs': 'fs',
-      'node:path': 'path'
+      'node:path': 'path',
+      '@': '/src', // Alias for your src directory
     }
   }
 });
