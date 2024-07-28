@@ -1,4 +1,3 @@
-{
-  "name": "my-shopify-app",
-  "welcome": "Welcome to the {{TARGET}} extension!"
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:2216a59da6b669ce975c8c1da5d45a860ef7aea340cb8deb0288117bbdb21af0
+size 88

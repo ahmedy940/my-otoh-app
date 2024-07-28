@@ -1,0 +1,12 @@
+.create-new-campaign-button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.create-new-campaign-button:hover {
+  background-color: #0056b3;
+}

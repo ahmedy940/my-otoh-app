@@ -1,21 +1,6 @@
-<<<<<<< HEAD
-node_modules
+# Node modules
+node_modules/
 
-/.cache
-/build
-/app/build
-/public/build/
-/public/_dev
-/app/public/build
-/prisma/dev.sqlite
-/prisma/dev.sqlite-journal
-database.sqlite
-
-.env
-package-lock.json
-yarn.lock
-.vercel
-=======
 # Logs
 logs
 *.log
@@ -146,4 +131,26 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
->>>>>>> ef418829f1a772831f8a994a80e5017322548a24
+
+# Remix-specific build directories
+/build
+/app/build
+/public/build/
+/public/_dev
+/app/public/build
+
+# Prisma
+/prisma/dev.sqlite
+/prisma/dev.sqlite-journal
+database.sqlite
+
+# Vercel
+.vercel
+
+# Exclude specific files
+server.cert
+server.js
+server.key
+openapi.yaml
+openssl.cnf
+openaiIntegration.js

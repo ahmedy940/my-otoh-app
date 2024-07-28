@@ -1,24 +1,3 @@
-{
-  "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
-  "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "strict": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "allowSyntheticDefaultImports": true,
-    "removeComments": false,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    },
-    "types": ["node"]
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1de3ac0de7262751137e782d6ed9a0e13ce06c235ee2cbc90d11621f3ab11603
+size 611

@@ -2,7 +2,7 @@ import React from 'react';
 import { Page, Layout, Card, DataTable, Button } from '@shopify/polaris';
 import { useLoaderData, useNavigate } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import prisma from '../../db.server';  // Ensure this path is correct
+import prisma from '../../db.server';
 
 export const loader = async () => {
   const campaigns = await prisma.campaign.findMany();

@@ -1,10 +1,9 @@
-import { vitePlugin as remix } from "@remix-run/dev";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+import { vitePlugin as remix } from "@remix-run/dev";
 
-// Related: https://github.com/remix-run/remix/issues/2835#issuecomment-1144102176
-// Replace the HOST env var with SHOPIFY_APP_URL so that it doesn't break the remix server. The CLI will eventually
-// stop passing in HOST, so we can remove this workaround after the next major release.
+// Replace the HOST env var with SHOPIFY_APP_URL
 if (
   process.env.HOST &&
   (!process.env.SHOPIFY_APP_URL ||
@@ -14,8 +13,7 @@ if (
   delete process.env.HOST;
 }
 
-const host = new URL(process.env.SHOPIFY_APP_URL || "http://localhost")
-  .hostname;
+const host = new URL(process.env.SHOPIFY_APP_URL || "http://localhost").hostname;
 let hmrConfig;
 
 if (host === "localhost") {
@@ -40,7 +38,6 @@ export default defineConfig({
     host: "0.0.0.0", // Bind to all interfaces
     hmr: hmrConfig,
     fs: {
-      // See https://vitejs.dev/config/server-options.html#server-fs-allow for more information
       allow: ["app", "node_modules"],
     },
   },
@@ -49,16 +46,19 @@ export default defineConfig({
       ignoredRouteFiles: ["**/.*"],
     }),
     tsconfigPaths(),
+    nodePolyfills({
+      include: ['fs', 'path', 'process']
+    })
   ],
   build: {
     assetsInlineLimit: 0,
   },
   resolve: {
     alias: {
-      // Add these aliases to ensure proper handling of Node.js core modules
       'node:fs': 'fs',
       'node:path': 'path',
-      '@': '/src', // Alias for your src directory
+      'node:process': 'process',
+      '@': '/app', // Updated alias to point to your app directory
     }
   }
 });

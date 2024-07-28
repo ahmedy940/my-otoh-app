@@ -8,4 +8,8 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
+export const getCampaigns = async () => {
+  return await prisma.campaign.findMany();
+};
+
 export default prisma;

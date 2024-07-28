@@ -1,1 +1,0 @@
-This is a new content for the new_sample.txt file.

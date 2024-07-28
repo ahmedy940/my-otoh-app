@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Page, Layout, Card, DataTable, Button } from '@shopify/polaris';
-import { useLoaderData, useNavigate } from '@remix-run/react';
+import { useLoaderData, useNavigate, useOutletContext } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import prisma from '../../db.server';  // Ensure this path is correct
+import prisma from '~/db.server';
 
 export const loader = async () => {
   const campaigns = await prisma.campaign.findMany();
+  console.log('Fetched campaigns in loader:', campaigns); // Debug statement
   return json({ campaigns });
 };
 
 const ManageCampaigns = () => {
-  const { campaigns } = useLoaderData();
+  const { campaigns } = useOutletContext();
   const navigate = useNavigate();
 
   const rows = campaigns.map((campaign, index) => [
@@ -30,13 +31,13 @@ const ManageCampaigns = () => {
   const handleLaunch = (index) => {
     const newCampaigns = [...campaigns];
     newCampaigns[index].launch = !newCampaigns[index].launch;
-    setCampaigns(newCampaigns);
+    // Update the campaigns state here
   };
 
   const handleSuccess = (index) => {
     const newCampaigns = [...campaigns];
     newCampaigns[index].status = 'success';
-    setCampaigns(newCampaigns);
+    // Update the campaigns state here
   };
 
   const handleEnhance = (index) => {
@@ -45,7 +46,7 @@ const ManageCampaigns = () => {
 
   const handleDelete = (index) => {
     const newCampaigns = campaigns.filter((_, i) => i !== index);
-    setCampaigns(newCampaigns);
+    // Update the campaigns state here
   };
 
   return (
