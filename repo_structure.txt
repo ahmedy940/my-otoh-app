@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Folder PATH listing for volume OS
 Volume serial number is 1833-9278
 C:.
@@ -62375,3 +62376,69 @@ C:.
         favicon.ico
         index.html
         
+=======
+.
+├── LICENSE
+├── README.md
+├── app
+│   ├── Dockerfile
+│   ├── components
+│   │   ├── Chatbot.css
+│   │   ├── Chatbot.jsx
+│   │   └── CreateCampaignPage.jsx
+│   ├── db.server.js
+│   ├── entry.server.jsx
+│   ├── openaiIntegration.js
+│   ├── pages
+│   │   ├── Home.jsx
+│   │   ├── ManageCampaigns.css
+│   │   ├── ManageCampaigns.jsx
+│   │   ├── OperationalDashboard.jsx
+│   │   └── SuccessDashboard.jsx
+│   ├── root.jsx
+│   ├── routes
+│   │   ├── _index
+│   │   ├── app._index.jsx
+│   │   ├── app.additional.jsx
+│   │   ├── app.create-campaign
+│   │   ├── app.jsx
+│   │   ├── app.manage-campaigns
+│   │   ├── app.operational-dashboard
+│   │   ├── app.success-dashboard
+│   │   ├── auth.$.jsx
+│   │   ├── auth.login
+│   │   ├── index.jsx
+│   │   ├── test.jsx
+│   │   └── webhooks.jsx
+│   └── shopify.server.js
+├── copy_of_new_sample.txt
+├── env.d.ts
+├── extensions
+│   └── my-shopify-app-facebook-integration
+│       ├── README.md
+│       ├── dist
+│       ├── locales
+│       ├── package.json
+│       ├── shopify.extension.toml
+│       └── src
+├── fly.toml
+├── package-lock.json
+├── package.json
+├── prisma
+│   ├── migrations
+│   │   ├── 20230615155147_create_session_table
+│   │   ├── 20240716204355_init
+│   │   └── migration_lock.toml
+│   └── schema.prisma
+├── public
+│   ├── favicon.ico
+│   └── index.html
+├── remix.config.js
+├── repo_structure.txt
+├── shopify.app.toml
+├── shopify.web.toml
+├── tsconfig.json
+└── vite.config.js
+
+20 directories, 41 files
+>>>>>>> d0a1ef376c76c202f47e39cc3165dc581363b845
