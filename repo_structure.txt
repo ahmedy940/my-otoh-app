@@ -1,15 +1,16 @@
 .
-├── LICENSE
 ├── README.md
 ├── app
 │   ├── Dockerfile
+│   ├── auth.facebook.js
 │   ├── components
 │   │   ├── Chatbot.css
 │   │   ├── Chatbot.jsx
-│   │   └── CreateCampaignPage.jsx
+│   │   ├── CreateCampaignModal.jsx
+│   │   └── Pagination.jsx
 │   ├── db.server.js
 │   ├── entry.server.jsx
-│   ├── openaiIntegration.js
+│   ├── metaAdsIntegration.js
 │   ├── pages
 │   │   ├── Home.jsx
 │   │   ├── ManageCampaigns.css
@@ -29,19 +30,15 @@
 │   │   ├── auth.$.jsx
 │   │   ├── auth.login
 │   │   ├── index.jsx
+│   │   ├── launch-campaign
 │   │   ├── test.jsx
 │   │   └── webhooks.jsx
-│   └── shopify.server.js
+│   ├── shopify.server.js
+│   └── utils
+│       └── campaignUtils.js
 ├── copy_of_new_sample.txt
 ├── env.d.ts
 ├── extensions
-│   └── my-shopify-app-facebook-integration
-│       ├── README.md
-│       ├── dist
-│       ├── locales
-│       ├── package.json
-│       ├── shopify.extension.toml
-│       └── src
 ├── fly.toml
 ├── package-lock.json
 ├── package.json
@@ -49,8 +46,13 @@
 │   ├── migrations
 │   │   ├── 20230615155147_create_session_table
 │   │   ├── 20240716204355_init
+│   │   ├── 20240916143839_init
+│   │   ├── 20240928133154_add_campaign_fields
+│   │   ├── 20240929014305_store_id
+│   │   ├── 20240930214358_all
 │   │   └── migration_lock.toml
-│   └── schema.prisma
+│   ├── schema.prisma
+│   └── seed.js
 ├── public
 │   ├── favicon.ico
 │   └── index.html
@@ -61,4 +63,4 @@
 ├── tsconfig.json
 └── vite.config.js
 
-20 directories, 41 files
+22 directories, 41 files
