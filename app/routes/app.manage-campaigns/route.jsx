@@ -1,71 +1,54 @@
-import React from 'react';
-import { Page, Layout, Card, DataTable, Button } from '@shopify/polaris';
-import { useLoaderData, useNavigate } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import prisma from '../../db.server';
+import { getCampaigns, deleteCampaign } from '../../shopify.server.js';
 
-export const loader = async () => {
-  const campaigns = await prisma.campaign.findMany();
-  return json({ campaigns });
-};
+export async function loader({ request }) {
+  try {
+    const url = new URL(request.url);  // Extract URL for query parameters
 
-const ManageCampaigns = () => {
-  const { campaigns } = useLoaderData();
-  const navigate = useNavigate();
+    // Fetch filters and pagination from the URL query parameters
+    const filters = {
+      name: url.searchParams.get('name') || '',
+      impressions: url.searchParams.get('impressions') || '',
+      clicks: url.searchParams.get('clicks') || '',
+      roas: url.searchParams.get('roas') || '',
+      status: url.searchParams.get('status') || '',
+    };
 
-  const rows = campaigns.map((campaign, index) => [
-    campaign.name,
-    campaign.impressions.toLocaleString(),
-    campaign.clicks.toLocaleString(),
-    `EGP ${campaign.spend.toLocaleString()}`,
-    `EGP ${campaign.roas.toLocaleString()}`,
-    <Button onClick={() => handleLaunch(index)}>{campaign.launch ? 'Pause' : 'Launch'}</Button>,
-    <>
-      <Button onClick={() => handleSuccess(index)}>Success</Button>
-      <Button onClick={() => handleEnhance(index)}>Enhance</Button>
-      <Button onClick={() => handleDelete(index)}>Delete</Button>
-    </>
-  ]);
+    const pagination = {
+      currentPage: Math.max(1, Number(url.searchParams.get('page')) || 1),
+      pageSize: Math.min(Math.max(1, Number(url.searchParams.get('size')) || 10), 100),
+    };
 
-  const handleLaunch = (index) => {
-    const newCampaigns = [...campaigns];
-    newCampaigns[index].launch = !newCampaigns[index].launch;
-    setCampaigns(newCampaigns);
-  };
+    // Try fetching campaigns from the database
+    const { campaigns, totalItems } = await getCampaigns({
+      filters,
+      pagination,
+    });
 
-  const handleSuccess = (index) => {
-    const newCampaigns = [...campaigns];
-    newCampaigns[index].status = 'success';
-    setCampaigns(newCampaigns);
-  };
+    // Return the fetched campaigns and total items
+    return json({ campaigns, totalItems });
 
-  const handleEnhance = (index) => {
-    console.log('Enhancing campaign:', index);
-  };
+  } catch (error) {
+    // Handle errors related to fetching data
+    console.error('Error fetching campaigns:', error);
+    return json({ error: 'Error fetching campaigns' }, { status: 500 });
+  }
+}
 
-  const handleDelete = (index) => {
-    const newCampaigns = campaigns.filter((_, i) => i !== index);
-    setCampaigns(newCampaigns);
-  };
+export async function action({ request }) {
+  const formData = await request.formData();
+  const actionType = formData.get('_action');
 
-  return (
-    <Page
-      title="Manage Campaigns"
-      primaryAction={{ content: 'Create New Campaign', onAction: () => navigate('/app/create-campaign') }}
-    >
-      <Layout>
-        <Layout.Section>
-          <Card>
-            <DataTable
-              columnContentTypes={['text', 'numeric', 'numeric', 'text', 'text', 'text']}
-              headings={['Campaign Name', 'Impressions', 'Clicks', 'Spend', 'ROAS', 'Launch']}
-              rows={rows}
-            />
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
-  );
-};
+  if (actionType === 'delete') {
+    const campaignId = parseInt(formData.get('campaignId'), 10);
+    try {
+      await deleteCampaign(campaignId);
+      return json({ success: true });
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+      return json({ success: false, message: 'Error deleting campaign.' }, { status: 500 });
+    }
+  }
 
-export default ManageCampaigns;
+  return json({ message: 'Invalid action.' }, { status: 400 });
+}

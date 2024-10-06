@@ -3,7 +3,7 @@
 client_id = "3d76c7d3a2639f989ec6aa968b9d6d52"
 name = "otoh"
 handle = "otoh"
-application_url = "https://pleased-sewing-lid-download.trycloudflare.com"
+application_url = "https://down-characterization-disc-disclaimer.trycloudflare.com"
 embedded = true
 
 [build]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://pleased-sewing-lid-download.trycloudflare.com/auth/callback",
-  "https://pleased-sewing-lid-download.trycloudflare.com/auth/shopify/callback",
-  "https://pleased-sewing-lid-download.trycloudflare.com/api/auth/callback"
+  "https://down-characterization-disc-disclaimer.trycloudflare.com/auth/callback",
+  "https://down-characterization-disc-disclaimer.trycloudflare.com/auth/shopify/callback",
+  "https://down-characterization-disc-disclaimer.trycloudflare.com/api/auth/callback"
 ]
 
 [webhooks]

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import {
   AppProvider as PolarisAppProvider,
@@ -12,23 +12,51 @@ import {
 } from "@shopify/polaris";
 import polarisTranslations from "@shopify/polaris/locales/en.json";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
-import { login } from "../../shopify.server";
+import { login, sessionStorage } from "../../shopify.server";
 import { loginErrorMessage } from "./error.server";
 
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }) => {
-  const errors = loginErrorMessage(await login(request));
+  try {
+    const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+    const shop = session.get("shop");
 
-  return json({ errors, polarisTranslations });
+    // If shop exists, redirect to the campaign management page
+    if (shop) {
+      return redirect("/app/manage-campaigns");
+    }
+
+    const errors = loginErrorMessage(await login(request));
+    return json({ errors, polarisTranslations });
+  } catch (error) {
+    console.error('Error during login loader:', error);
+    return json({ error: 'Error during login loader' }, { status: 500 });
+  }
 };
 
 export const action = async ({ request }) => {
-  const errors = loginErrorMessage(await login(request));
+  try {
+    const result = await login(request);
 
-  return json({
-    errors,
-  });
+    if (result.success) {
+      const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+      session.set("shop", result.shop);
+
+      const headers = new Headers({
+        "Set-Cookie": await sessionStorage.commitSession(session),
+      });
+
+      return json({ success: true }, { headers });
+    }
+
+    return json({
+      errors: loginErrorMessage(result),
+    });
+  } catch (error) {
+    console.error('Error during login action:', error);
+    return json({ error: 'Error during login action' }, { status: 500 });
+  }
 };
 
 export default function Auth() {

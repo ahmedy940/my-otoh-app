@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { vitePlugin as remix } from "@remix-run/dev";
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 
 // Replace the HOST env var with SHOPIFY_APP_URL
 if (
@@ -47,17 +49,42 @@ export default defineConfig({
     }),
     tsconfigPaths(),
     nodePolyfills({
-      include: ['fs', 'path', 'process']
+      include: ['fs', 'path', 'process', 'crypto', 'http', 'https', 'url']
     })
   ],
   build: {
     assetsInlineLimit: 0,
+    rollupOptions: {
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true
+        }),
+        NodeModulesPolyfillPlugin()
+      ]
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true
+    }
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true
+        }),
+        NodeModulesPolyfillPlugin()
+      ]
+    }
   },
   resolve: {
     alias: {
       'node:fs': 'fs',
       'node:path': 'path',
       'node:process': 'process',
+      'node:crypto': 'crypto',
+      'node:http': 'http',
+      'node:https': 'https',
+      'node:url': 'url',
       '@': '/app', // Updated alias to point to your app directory
     }
   }

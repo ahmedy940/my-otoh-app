@@ -1,71 +1,55 @@
-import React from 'react';
-import { Page, Layout, Card, DataTable, Button } from '@shopify/polaris';
-import { useLoaderData, useNavigate } from '@remix-run/react';
-import { json } from '@remix-run/node';
-import prisma from '../../db.server';  // Ensure this path is correct
+import { json, redirect } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
+import { login } from "../../shopify.server";
+import styles from "./styles.module.css";
 
-export const loader = async () => {
-  const campaigns = await prisma.campaign.findMany();
-  return json({ campaigns });
+export const loader = async ({ request }) => {
+  const url = new URL(request.url);
+
+  if (url.searchParams.get("shop")) {
+    throw redirect(`/app?${url.searchParams.toString()}`);
+  }
+
+  return json({ showForm: Boolean(login) });
 };
 
-const ManageCampaigns = () => {
-  const { campaigns } = useLoaderData();
-  const navigate = useNavigate();
-
-  const rows = campaigns.map((campaign, index) => [
-    campaign.name,
-    campaign.impressions.toLocaleString(),
-    campaign.clicks.toLocaleString(),
-    `EGP ${campaign.spend.toLocaleString()}`,
-    `EGP ${campaign.roas.toLocaleString()}`,
-    <Button onClick={() => handleLaunch(index)}>{campaign.launch ? 'Pause' : 'Launch'}</Button>,
-    <>
-      <Button onClick={() => handleSuccess(index)}>Success</Button>
-      <Button onClick={() => handleEnhance(index)}>Enhance</Button>
-      <Button onClick={() => handleDelete(index)}>Delete</Button>
-    </>
-  ]);
-
-  const handleLaunch = (index) => {
-    const newCampaigns = [...campaigns];
-    newCampaigns[index].launch = !newCampaigns[index].launch;
-    setCampaigns(newCampaigns);
-  };
-
-  const handleSuccess = (index) => {
-    const newCampaigns = [...campaigns];
-    newCampaigns[index].status = 'success';
-    setCampaigns(newCampaigns);
-  };
-
-  const handleEnhance = (index) => {
-    console.log('Enhancing campaign:', index);
-  };
-
-  const handleDelete = (index) => {
-    const newCampaigns = campaigns.filter((_, i) => i !== index);
-    setCampaigns(newCampaigns);
-  };
+export default function App() {
+  const { showForm } = useLoaderData();
 
   return (
-    <Page
-      title="Manage Campaigns"
-      primaryAction={{ content: 'Create New Campaign', onAction: () => navigate('/app/create-campaign') }}
-    >
-      <Layout>
-        <Layout.Section>
-          <Card>
-            <DataTable
-              columnContentTypes={['text', 'numeric', 'numeric', 'text', 'text', 'text']}
-              headings={['Campaign Name', 'Impressions', 'Clicks', 'Spend', 'ROAS', 'Launch']}
-              rows={rows}
-            />
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
+    <div className={styles.index}>
+      <div className={styles.content}>
+        <h1 className={styles.heading}>A short heading about [your app]</h1>
+        <p className={styles.text}>
+          A tagline about [your app] that describes your value proposition.
+        </p>
+        {showForm && (
+          <Form className={styles.form} method="post" action="/auth/login">
+            <label className={styles.label}>
+              <span>Shop domain</span>
+              <input className={styles.input} type="text" name="shop" />
+              <span>e.g: my-shop-domain.myshopify.com</span>
+            </label>
+            <button className={styles.button} type="submit">
+              Log in
+            </button>
+          </Form>
+        )}
+        <ul className={styles.list}>
+          <li>
+            <strong>Product feature</strong>. Some detail about your feature and
+            its benefit to your customer.
+          </li>
+          <li>
+            <strong>Product feature</strong>. Some detail about your feature and
+            its benefit to your customer.
+          </li>
+          <li>
+            <strong>Product feature</strong>. Some detail about your feature and
+            its benefit to your customer.
+          </li>
+        </ul>
+      </div>
+    </div>
   );
-};
-
-export default ManageCampaigns;
+}

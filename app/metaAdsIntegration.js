@@ -8,15 +8,15 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "../app/db.server.js";
 import {
-  createMetaCampaign,
-  getCampaignStats,
-  updateMetaCampaign
-} from '../app/metaAdsIntegration';
-import {
   createNewCampaign,
   removeCampaign,
   getCampaignsFromBackend
 } from '../app/utils/campaignUtils';
+import {
+  createCampaign as createMetaCampaign,
+  getCampaign,
+  updateCampaign as updateMetaCampaign
+} from '../app/metaAdsIntegration';
 
 // Import the Facebook SDK using ES Modules
 import { FacebookAdsApi, AdAccount, Campaign } from 'facebook-nodejs-business-sdk';
@@ -73,13 +73,65 @@ export const facebookApi = api;
 export const facebookAdAccount = adAccount;
 export const facebookCampaign = Campaign;
 
-// Use imported functions for managing Meta campaigns
-export const createCampaign = createMetaCampaign;
-export const getCampaigns = getCampaignStats;
-export const updateCampaign = updateMetaCampaign;
+// Shopify Campaign Management Functions (from campaignUtils.js)
+export const createNewCampaignInShopify = async (data) => {
+  console.log('Creating new Shopify campaign:', data);
+  try {
+    const newCampaign = await createNewCampaign(data);
+    console.log('New Shopify campaign created successfully:', newCampaign);
+    return newCampaign;
+  } catch (error) {
+    console.error('Error creating Shopify campaign:', error);
+    throw error;
+  }
+};
 
-// Campaign management functions (from campaignUtils.js)
-export const createNewCampaignInShopify = createNewCampaign; // Create a new campaign in Shopify database
-export const removeCampaignInShopify = removeCampaign; // Remove a campaign by ID
+export const removeCampaignInShopify = async (campaignId) => {
+  console.log(`Removing Shopify campaign with ID: ${campaignId}`);
+  try {
+    await removeCampaign(campaignId);
+    console.log(`Shopify campaign with ID ${campaignId} removed successfully.`);
+  } catch (error) {
+    console.error(`Error removing Shopify campaign with ID ${campaignId}:`, error);
+    throw error;
+  }
+};
+
 export const fetchCampaignsFromBackend = getCampaignsFromBackend; // Fetch campaigns with filters and pagination
 
+// Meta Ads Campaign Management Functions (from metaAdsIntegration.js)
+export const createMetaCampaignInFacebook = async (campaignData) => {
+  console.log('Creating new Meta campaign in Facebook:', campaignData);
+  try {
+    const newCampaign = await createMetaCampaign(accessToken, campaignData);
+    console.log('New Meta campaign created successfully:', newCampaign);
+    return newCampaign;
+  } catch (error) {
+    console.error('Error creating Meta campaign in Facebook:', error);
+    throw error;
+  }
+};
+
+export const getMetaCampaignInFacebook = async (campaignId) => {
+  console.log(`Fetching Meta campaign with ID: ${campaignId}`);
+  try {
+    const campaign = await getCampaign(accessToken, campaignId);
+    console.log('Meta campaign fetched successfully:', campaign);
+    return campaign;
+  } catch (error) {
+    console.error(`Error fetching Meta campaign with ID ${campaignId}:`, error);
+    throw error;
+  }
+};
+
+export const updateMetaCampaignInFacebook = async (campaignId, updatedData) => {
+  console.log(`Updating Meta campaign with ID: ${campaignId}`);
+  try {
+    const updatedCampaign = await updateMetaCampaign(accessToken, campaignId, updatedData);
+    console.log('Meta campaign updated successfully:', updatedCampaign);
+    return updatedCampaign;
+  } catch (error) {
+    console.error(`Error updating Meta campaign with ID ${campaignId}:`, error);
+    throw error;
+  }
+};
